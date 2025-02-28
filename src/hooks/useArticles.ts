@@ -93,7 +93,6 @@ export const useArticles = (
       );
     }
 
-    console.log({ result });
     setFilteredArticles(result);
   }, [allArticles, filters]);
 

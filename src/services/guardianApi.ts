@@ -5,7 +5,7 @@ export const fetchGuardianArticles = async (
   filters: SearchFilters
 ): Promise<Article[]> => {
   try {
-    const params = buildSearchParams(filters, 'guardian');
+    const params = buildSearchParams(filters);
     params.append('api-key', API_KEYS.guardian);
 
     // Add a parameter to fetch all sections/categories

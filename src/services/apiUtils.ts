@@ -7,12 +7,8 @@ export const API_KEYS = {
   nytimes: import.meta.env.VITE_NYTIMES_KEY || 'your-nytimes-key',
 };
 
-export const buildSearchParams = (
-  filters: SearchFilters,
-  source?: string
-): URLSearchParams => {
+export const buildSearchParams = (filters: SearchFilters): URLSearchParams => {
   const params = new URLSearchParams();
-  console.log({ source });
   if (filters.keyword) {
     params.append('q', filters.keyword);
   }

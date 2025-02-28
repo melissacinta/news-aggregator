@@ -153,10 +153,10 @@ docker-compose up -d
 
 ## Development vs Production
 
-The current setup is optimized for production. For development with hot-reloading:
+The current setup is optimized For development with hot-reloading, For production
 
-1. Modify the docker-compose.yml to use a development command instead
-2. Consider creating a separate docker-compose.dev.yml file for development-specific settings
+1. Modify the docker-compose-dev.yml to use a production command instead
+2. Consider creating a separate docker-compose.yml file for production-specific settings
 3. The newsApi api-key can only be use in a development environment as it requires a paid version on production
 
 ## Further Assistance

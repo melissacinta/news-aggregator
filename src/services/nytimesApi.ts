@@ -5,7 +5,7 @@ export const fetchNYTimesArticles = async (
   filters: SearchFilters
 ): Promise<Article[]> => {
   try {
-    const params = buildSearchParams(filters, 'nyt');
+    const params = buildSearchParams(filters);
     params.append('api-key', API_KEYS.nytimes);
     // Fetch a broad set of articles
     params.append('sort', 'newest');
