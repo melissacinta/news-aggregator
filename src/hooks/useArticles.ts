@@ -8,28 +8,32 @@ export const useArticles = (
   initialFilters: SearchFilters,
   sources: NewsSource[]
 ) => {
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [allArticles, setAllArticles] = useState<Article[]>([]);
+  const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<SearchFilters>(initialFilters);
 
+  // This function fetches articles from APIs - only triggered on keyword search or refresh
   const fetchArticles = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
       const articlePromises: Promise<Article[]>[] = [];
+      // Create a simplified filter object with only the keyword for API requests
+      const apiFilters = { keyword: filters.keyword };
 
       if (sources.includes('newsapi')) {
-        articlePromises.push(fetchNewsApiArticles(filters));
+        articlePromises.push(fetchNewsApiArticles(apiFilters));
       }
 
       if (sources.includes('guardian')) {
-        articlePromises.push(fetchGuardianArticles(filters));
+        articlePromises.push(fetchGuardianArticles(apiFilters));
       }
 
       if (sources.includes('nytimes')) {
-        articlePromises.push(fetchNYTimesArticles(filters));
+        articlePromises.push(fetchNYTimesArticles(apiFilters));
       }
 
       const articlesFromAllSources = await Promise.all(articlePromises);
@@ -41,32 +45,93 @@ export const useArticles = (
           new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
       );
 
-      setArticles(sortedArticles);
+      setAllArticles(sortedArticles);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch articles');
     } finally {
       setLoading(false);
     }
-  }, [filters, sources]);
+  }, [filters.keyword, sources]);
 
+  // Apply client-side filtering whenever filters or allArticles change
+  useEffect(() => {
+    applyClientFilters();
+  }, [filters, allArticles]);
+
+  // Initial load
   useEffect(() => {
     fetchArticles();
   }, [fetchArticles]);
 
-  const updateFilters = useCallback((newFilters: Partial<SearchFilters>) => {
-    setFilters((prev) => ({ ...prev, ...newFilters }));
-  }, []);
+  // Function to apply client-side filters
+  const applyClientFilters = useCallback(() => {
+    let result = [...allArticles];
 
+    // Filter by category
+    if (filters.category) {
+      result = result.filter(
+        (article) => article.category === filters.category
+      );
+    }
+
+    // Filter by source
+    if (filters.source) {
+      result = result.filter((article) => article.source.id === filters.source);
+    }
+
+    // Filter by date range
+    if (filters.dateFrom && filters.dateTo) {
+      const fromDate = new Date(filters.dateFrom);
+      const toDate = new Date(filters.dateTo);
+
+      // Set to end of day
+      toDate.setHours(23, 59, 59, 999);
+      result = result.filter(
+        (article) =>
+          new Date(article.publishedAt) >= fromDate &&
+          new Date(article.publishedAt) <= toDate
+      );
+    }
+
+    console.log({ result });
+    setFilteredArticles(result);
+  }, [allArticles, filters]);
+
+  // This function updates filters
+  const updateFilters = useCallback(
+    (newFilters: Partial<SearchFilters>) => {
+      setFilters((prev) => {
+        const updated = { ...prev, ...newFilters };
+
+        // Only trigger API fetch if keyword changes
+        if (
+          newFilters.keyword !== undefined &&
+          newFilters.keyword !== prev.keyword
+        ) {
+          // trigger the fetch in the next tick to ensure state is updated
+          setTimeout(() => fetchArticles(), 0);
+        }
+
+        return updated;
+      });
+    },
+    [fetchArticles]
+  );
+
+  const clearFilters = () => setFilteredArticles(allArticles);
+
+  // Function to manually refresh articles
   const refreshArticles = useCallback(() => {
     fetchArticles();
   }, [fetchArticles]);
 
   return {
-    articles,
+    articles: filteredArticles,
     loading,
     error,
     filters,
     updateFilters,
     refreshArticles,
+    clearFilters,
   };
 };

@@ -1,3 +1,5 @@
+// src/pages/HomePage.tsx
+
 import React, { useState, useEffect } from 'react';
 import SearchBar from '../components/SearchBar';
 import ArticleCard from '../components/ArticleCard';
@@ -15,6 +17,7 @@ const HomePage: React.FC = () => {
     refreshArticles,
     savedArticles,
     saveArticle,
+    clearFilters,
   } = useArticlesContext();
 
   const { preferences } = usePreferencesContext();
@@ -36,10 +39,12 @@ const HomePage: React.FC = () => {
     refreshArticles();
   }, [preferences.sources, refreshArticles]);
 
+  // This will trigger API call only when keyword changes
   const handleSearch = (keyword: string) => {
     updateFilters({ keyword });
   };
 
+  // These functions will only apply client-side filters
   const handleFilterByDate = (from: string, to: string) => {
     updateFilters({
       dateFrom: from || undefined,
@@ -55,21 +60,12 @@ const HomePage: React.FC = () => {
     updateFilters({ source });
   };
 
-  // if (error) {
-  //   return (
-  //     <div className="container mx-auto px-4 py-8">
-  //       <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-  //         <p>{error}</p>
-  //         <button
-  //           onClick={refreshArticles}
-  //           className="mt-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-  //         >
-  //           Try Again
-  //         </button>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  const handleFilterByAuthor = (author?: string) => {
+    // We'll add client-side author filtering
+    updateFilters({ author });
+    // Note: This is a simplified approach - in a real app, you would
+    // add author to your filters state and handle it in useArticles hook
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -82,18 +78,19 @@ const HomePage: React.FC = () => {
         onFilterBySource={handleFilterBySource}
         categories={allCategories}
         sources={preferences.sources}
+        onFilterByAuthor={handleFilterByAuthor}
+        clearFilters={clearFilters}
       />
+
       {error && (
-        <div className="container mx-auto px-4 py-8">
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            <p>{error}</p>
-            <button
-              onClick={refreshArticles}
-              className="mt-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-            >
-              Try Again
-            </button>
-          </div>
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+          <p>{error}</p>
+          <button
+            onClick={refreshArticles}
+            className="mt-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          >
+            Try Again
+          </button>
         </div>
       )}
 

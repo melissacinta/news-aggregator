@@ -7,6 +7,8 @@ export const fetchNYTimesArticles = async (
   try {
     const params = buildSearchParams(filters, 'nyt');
     params.append('api-key', API_KEYS.nytimes);
+    // Fetch a broad set of articles
+    params.append('sort', 'newest');
 
     const response = await fetch(
       `https://api.nytimes.com/svc/search/v2/articlesearch.json?${params.toString()}`
@@ -32,10 +34,30 @@ export const fetchNYTimesArticles = async (
         id: 'nytimes',
         name: 'The New York Times',
       },
-      category: article.section_name?.toLowerCase() as any,
+      // Map NYT section names to our category types
+      category: mapNYTSectionToCategory(article.section_name),
       publishedAt: article.pub_date,
     }));
   } catch (error) {
     return handleApiError(error);
   }
 };
+
+// Helper function to map NYT sections to our category types
+function mapNYTSectionToCategory(section?: string): any {
+  if (!section) return 'general';
+
+  const mapping: { [key: string]: any } = {
+    Business: 'business',
+    Technology: 'technology',
+    Sports: 'sports',
+    Science: 'science',
+    Health: 'health',
+    Arts: 'entertainment',
+    World: 'general',
+    'U.S.': 'general',
+    Politics: 'general',
+  };
+
+  return mapping[section] || 'general';
+}

@@ -8,6 +8,12 @@ export const fetchGuardianArticles = async (
     const params = buildSearchParams(filters, 'guardian');
     params.append('api-key', API_KEYS.guardian);
 
+    // Add a parameter to fetch all sections/categories
+    params.append(
+      'section',
+      'business|entertainment|politics|world|technology|science|sport|health'
+    );
+
     const response = await fetch(
       `https://content.guardianapis.com/search?${params.toString()}&show-fields=headline,thumbnail,byline,bodyText`
     );
@@ -31,10 +37,27 @@ export const fetchGuardianArticles = async (
         id: 'guardian',
         name: 'The Guardian',
       },
-      category: article.sectionId as any,
+      // Map Guardian sections to our category types
+      category: mapGuardianSectionToCategory(article.sectionId),
       publishedAt: article.webPublicationDate,
     }));
   } catch (error) {
     return handleApiError(error);
   }
 };
+
+// Helper function to map Guardian sections to our category types
+function mapGuardianSectionToCategory(section: string): any {
+  const mapping: { [key: string]: any } = {
+    business: 'business',
+    technology: 'technology',
+    sport: 'sports',
+    science: 'science',
+    lifeandstyle: 'health',
+    culture: 'entertainment',
+    politics: 'general',
+    world: 'general',
+  };
+
+  return mapping[section] || 'general';
+}

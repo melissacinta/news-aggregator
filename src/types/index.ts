@@ -40,6 +40,7 @@ export interface SearchFilters {
   keyword: string;
   dateFrom?: string;
   dateTo?: string;
+  author?: string;
   category?: Category;
   source?: NewsSource;
 }

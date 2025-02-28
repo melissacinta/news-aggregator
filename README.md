@@ -36,9 +36,6 @@ news-aggregator/
 │   │   └── useUserPreferences.ts
 │   ├── context/
 │   │   └── UserPreferencesContext.tsx
-│   ├── utils/
-│   │   ├── dateUtils.ts
-│   │   └── apiUtils.ts
 │   ├── App.tsx
 │   └── index.tsx
 ├── public/
@@ -56,7 +53,7 @@ news-aggregator/
 The project consists of the following key files for Docker containerization:
 
 - `Dockerfile`: Defines how the application is built and packaged
-- `docker-compose.yml`: Orchestrates the container setup with appropriate configurations
+- `docker-compose-dev.yml`: Orchestrates the container setup with appropriate configurations
 - `.env.local`: Contains environment variables needed by the application it is not currently being ignored by gitignore and this behaviour is by design.
 
 ## Setup Instructions
@@ -67,7 +64,7 @@ To build and start the containerized application:
 
 ```bash
 # Build and start the container in detached mode
-docker-compose up -d
+docker-compose -f docker-compose-dev.yml up --build
 
 # View logs if needed
 docker-compose logs -f
@@ -95,40 +92,40 @@ FROM node:18-alpine
 WORKDIR /app
 
 COPY package*.json ./
+
 RUN npm install
-RUN npm i -g serve
 
 COPY . .
-RUN npm run build
 
 EXPOSE 3000
 
-CMD ["serve", "-s", "dist", "--single"]
+CMD ["npm", "run", "dev"]
 ```
 
-### docker-compose.yml
+### docker-compose-dev.yml
 
 The docker-compose.yml file sets up the service with the following configurations:
 
 ```yaml
-version: '3'
-
+version: '3.9'
 services:
-  app:
+  frontend:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: frontend
+    restart: always
     ports:
-      - "3000:3000"
-    env_file:
-      - .env.local
+      - 3000:3000
     volumes:
       - .:/app
       - /app/node_modules
-      - /app/dist
-    environment:
-      - NODE_ENV=production
-    restart: unless-stopped
+    env_file:
+      - .env.local
+    networks:
+      - network
+networks:
+  network:
 ```
 
 ## Troubleshooting

@@ -12,29 +12,13 @@ export const buildSearchParams = (
   source?: string
 ): URLSearchParams => {
   const params = new URLSearchParams();
-
+  console.log({ source });
   if (filters.keyword) {
     params.append('q', filters.keyword);
   }
 
-  if (filters.dateFrom) {
-    params.append(source === 'nyt' ? 'begin_date' : 'from', filters.dateFrom);
-  }
-
-  if (filters.dateTo) {
-    params.append(source === 'nyt' ? 'end_date' : 'to', filters.dateTo);
-  }
-
-  if (filters.category) {
-    params.append(
-      source === 'guardian'
-        ? 'section'
-        : source === 'nyt'
-        ? 'news_desk'
-        : 'category',
-      filters.category
-    );
-  }
+  // No longer adding other parameters to API calls
+  // They'll be handled by client-side filtering
 
   return params;
 };
