@@ -5,7 +5,7 @@ const Header: React.FC = () => {
   const location = useLocation();
 
   return (
-    <header className="bg-gray-800 text-white shadow-md">
+    <header className="bg-gray-800 text-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="text-2xl font-bold mb-4 md:mb-0">
