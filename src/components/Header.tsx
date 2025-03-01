@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-
+import news from '../assets/News.jpg';
 const Header: React.FC = () => {
   const location = useLocation();
 
@@ -10,7 +10,7 @@ const Header: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="text-2xl font-bold mb-4 md:mb-0">
             <Link to="/" className="text-white hover:text-gray-200">
-              News Aggregator
+              <img src={news} alt=" News Aggregator" className="w-auto h-12" />
             </Link>
           </div>
 
