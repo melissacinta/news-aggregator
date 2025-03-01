@@ -1,51 +1,34 @@
 // src/components/SearchBar.tsx
-import React, { useEffect, useState } from 'react';
-import { Category, NewsSource } from '../types';
+import React, { useState } from 'react';
+import { Category, NewsSource, SearchFilters } from '../types';
 
 interface SearchBarProps {
   onSearch: (keyword: string) => void;
-  onFilterByDate: (from: string, to: string) => void;
-  onFilterByCategory: (category?: Category) => void;
-  onFilterBySource: (source?: NewsSource) => void;
-  onFilterByAuthor: (author?: string) => void;
+  // onFilterByDate: (from: string, to: string) => void;
+  // onFilterByCategory: (category?: Category) => void;
+  // onFilterBySource: (source?: NewsSource) => void;
+  // onFilterByAuthor: (author?: string) => void;
   categories: Category[];
   sources: NewsSource[];
   clearFilters: () => void;
+  filters: SearchFilters;
+  updateFilters: (filter: Partial<SearchFilters>) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   onSearch,
-  onFilterByDate,
-  onFilterByCategory,
-  onFilterBySource,
-  onFilterByAuthor,
   categories,
   sources,
   clearFilters,
+  updateFilters,
+  filters,
 }) => {
   const [keyword, setKeyword] = useState('');
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
-  const [author, setAuthor] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch(keyword);
-  };
-
-  useEffect(() => {
-    if (dateFrom && dateTo) {
-      onFilterByDate(dateFrom, dateTo);
-    }
-  }, [dateFrom, dateTo]);
-
-  const handleAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setAuthor(value);
-    if (onFilterByAuthor) {
-      onFilterByAuthor(value || undefined);
-    }
   };
 
   const sourceDisplayNames: Record<NewsSource, string> = {
@@ -80,7 +63,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
           <button
             type="button"
-            className="text-blue-600 px-3 py-1 rounded flex items-center"
+            className="text-gray-800 hover:text-gray-700 px-3 py-1 rounded flex items-center"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? 'Hide Filters' : 'Show Filters'}
@@ -104,7 +87,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-500/70 transition-all duration-300 ease-linear"
           >
             Search
           </button>
@@ -121,18 +104,18 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   <input
                     type="date"
                     className="w-full p-2 border border-gray-300 rounded"
-                    value={dateFrom}
+                    value={filters?.dateFrom || ''}
                     onChange={(e) => {
-                      setDateFrom(e.target.value);
+                      updateFilters({ dateFrom: e.target.value });
                     }}
                   />
                   <span>to</span>
                   <input
                     type="date"
                     className="w-full p-2 border border-gray-300 rounded"
-                    value={dateTo}
+                    value={filters?.dateTo || ''}
                     onChange={(e) => {
-                      setDateTo(e.target.value);
+                      updateFilters({ dateTo: e.target.value });
                     }}
                   />
                 </div>
@@ -144,10 +127,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 </label>
                 <select
                   className="w-full p-2 border border-gray-300 rounded"
+                  value={filters?.category || ''}
                   onChange={(e) =>
-                    onFilterByCategory(
-                      (e.target.value as Category) || undefined
-                    )
+                    updateFilters({
+                      category: (e.target.value as Category) || undefined,
+                    })
                   }
                 >
                   <option value="">All Categories</option>
@@ -164,11 +148,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   Source
                 </label>
                 <select
+                  value={filters?.source || ''}
                   className="w-full p-2 border border-gray-300 rounded"
                   onChange={(e) =>
-                    onFilterBySource(
-                      (e.target.value as NewsSource) || undefined
-                    )
+                    updateFilters({
+                      source: (e.target.value as NewsSource) || undefined,
+                    })
                   }
                 >
                   <option value="">All Sources</option>
@@ -188,8 +173,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   type="text"
                   placeholder="Filter by author..."
                   className="w-full p-2 border border-gray-300 rounded"
-                  value={author}
-                  onChange={handleAuthorChange}
+                  value={filters?.author || ''}
+                  onChange={(e) =>
+                    updateFilters({
+                      author: e.target.value || undefined,
+                    })
+                  }
                 />
               </div>
             </div>
@@ -197,13 +186,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
               <button
                 onClick={() => {
                   // Reset all filters
-                  setKeyword('');
-                  setDateFrom('');
-                  setDateTo('');
-                  setAuthor('');
-                  onFilterByCategory(undefined);
-                  onFilterBySource(undefined);
-                  onFilterByAuthor(undefined);
                   clearFilters();
                 }}
                 className="bg-gray-200 text-gray-800 px-6 py-2 rounded hover:bg-gray-300"

@@ -6,6 +6,7 @@ import SavedArticles from './pages/SavedArticles';
 import Settings from './pages/Settings';
 import { PreferencesProvider } from './contexts/PreferencesContext';
 import { ArticlesProvider } from './contexts/ArticlesContext';
+import FourOhFour from './pages/FourOhFour';
 
 const App: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ const App: React.FC = () => {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/saved" element={<SavedArticles />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="*" element={<FourOhFour />} />
               </Routes>
             </main>
             <footer className="bg-gray-800 text-white py-6">

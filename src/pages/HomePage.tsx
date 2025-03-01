@@ -6,13 +6,14 @@ import ArticleCard from '../components/ArticleCard';
 import Loader from '../components/Loader';
 import { useArticlesContext } from '../contexts/ArticlesContext';
 import { usePreferencesContext } from '../contexts/PreferencesContext';
-import { Category, NewsSource } from '../types';
+import { Category } from '../types';
 
 const HomePage: React.FC = () => {
   const {
     articles,
     loading,
     error,
+    filters,
     updateFilters,
     refreshArticles,
     savedArticles,
@@ -44,42 +45,17 @@ const HomePage: React.FC = () => {
     updateFilters({ keyword });
   };
 
-  // These functions will only apply client-side filters
-  const handleFilterByDate = (from: string, to: string) => {
-    updateFilters({
-      dateFrom: from || undefined,
-      dateTo: to || undefined,
-    });
-  };
-
-  const handleFilterByCategory = (category?: Category) => {
-    updateFilters({ category });
-  };
-
-  const handleFilterBySource = (source?: NewsSource) => {
-    updateFilters({ source });
-  };
-
-  const handleFilterByAuthor = (author?: string) => {
-    // We'll add client-side author filtering
-    updateFilters({ author });
-    // Note: This is a simplified approach - in a real app, you would
-    // add author to your filters state and handle it in useArticles hook
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Latest News</h1>
 
       <SearchBar
         onSearch={handleSearch}
-        onFilterByDate={handleFilterByDate}
-        onFilterByCategory={handleFilterByCategory}
-        onFilterBySource={handleFilterBySource}
         categories={allCategories}
         sources={preferences.sources}
-        onFilterByAuthor={handleFilterByAuthor}
         clearFilters={clearFilters}
+        filters={filters}
+        updateFilters={updateFilters}
       />
 
       {error && (

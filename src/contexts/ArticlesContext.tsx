@@ -1,11 +1,5 @@
 // src/contexts/ArticlesContext.tsx
-import React, {
-  createContext,
-  useContext,
-  ReactNode,
-  useState,
-  useMemo,
-} from 'react';
+import React, { createContext, useContext, ReactNode, useState } from 'react';
 import { Article, SearchFilters } from '../types';
 import { useArticles } from '../hooks/useArticles';
 import { usePreferencesContext } from './PreferencesContext';
@@ -21,7 +15,6 @@ interface ArticlesContextType {
   savedArticles: Article[];
   saveArticle: (article: Article) => void;
   removeSavedArticle: (articleId: string) => void;
-  filterByAuthor: (author?: string) => void;
 }
 
 const ArticlesContext = createContext<ArticlesContextType | undefined>(
@@ -47,25 +40,12 @@ export const ArticlesProvider: React.FC<{ children: ReactNode }> = ({
     return stored ? JSON.parse(stored) : [];
   });
 
-  const [authorFilter, setAuthorFilter] = useState<string | undefined>(
-    undefined
-  );
-
   const initialFilters: SearchFilters = {
     keyword: '',
     category: preferences.categories[0],
   };
 
   const articlesHook = useArticles(initialFilters, preferences.sources);
-
-  // Apply author filtering client-side
-  const filteredArticles = useMemo(() => {
-    if (!authorFilter) return articlesHook.articles;
-
-    return articlesHook.articles.filter((article) =>
-      article.author?.toLowerCase().includes(authorFilter.toLowerCase())
-    );
-  }, [articlesHook.articles, authorFilter]);
 
   const saveArticle = (article: Article) => {
     setSavedArticles((prev) => {
@@ -83,19 +63,13 @@ export const ArticlesProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
-  const filterByAuthor = (author?: string) => {
-    setAuthorFilter(author);
-  };
-
   return (
     <ArticlesContext.Provider
       value={{
         ...articlesHook,
-        articles: filteredArticles, // Use the filtered articles instead
         savedArticles,
         saveArticle,
         removeSavedArticle,
-        filterByAuthor,
       }}
     >
       {children}

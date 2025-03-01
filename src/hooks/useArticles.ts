@@ -79,6 +79,13 @@ export const useArticles = (
       result = result.filter((article) => article.source.id === filters.source);
     }
 
+    // Filter by source
+    if (filters.author) {
+      result = result.filter((article) =>
+        article.author?.includes(filters.author as string)
+      );
+    }
+
     // Filter by date range
     if (filters.dateFrom && filters.dateTo) {
       const fromDate = new Date(filters.dateFrom);
@@ -117,7 +124,10 @@ export const useArticles = (
     [fetchArticles]
   );
 
-  const clearFilters = () => setFilteredArticles(allArticles);
+  const clearFilters = () => {
+    setFilteredArticles(allArticles);
+    setFilters(initialFilters);
+  };
 
   // Function to manually refresh articles
   const refreshArticles = useCallback(() => {

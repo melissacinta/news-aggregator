@@ -16,35 +16,38 @@ news-aggregator/
 ├── src/
 │   ├── components/
 │   │   ├── Header.tsx
-│   │   ├── NewsCard.tsx
-│   │   ├── NewsList.tsx
+│   │   ├── ArticleCard.tsx
 │   │   ├── SearchBar.tsx
-│   │   ├── FilterPanel.tsx
-│   │   ├── UserPreferences.tsx
+│   │   ├── CheckBox.tsx
+│   │   ├── Loader.tsx
 │   │   └── Footer.tsx
 │   ├── services/
-│   │   ├── api.ts
-│   │   ├── newsApiService.ts
-│   │   ├── guardianApiService.ts
-│   │   └── nytApiService.ts
-│   ├── interfaces/
-│   │   ├── Article.ts
-│   │   ├── NewsSource.ts
-│   │   └── UserPreferences.ts
+│   │   ├── apiUtils.ts
+│   │   ├── newsApi.ts
+│   │   ├── guardianApi.ts
+│   │   └── nytimesApi.ts
+│   ├── pages/
+│   │   ├── HopmePage.tsx
+│   │   ├── SavedArticles.tsx
+│   │   └── Settings.ts
 │   ├── hooks/
-│   │   ├── useNewsArticles.ts
-│   │   └── useUserPreferences.ts
+│   │   ├── useArticles.ts
+│   │   ├── usePreferences.ts
+│   │   └── useSearch.ts
 │   ├── context/
-│   │   └── UserPreferencesContext.tsx
+│   │   ├── ArticlesContext.ts
+│   │   └── PreferencesContext.ts
+│   ├── types/
+│   │   └── index.ts
 │   ├── App.tsx
 │   └── index.tsx
+│   └── main.tsx
 ├── public/
-│   ├── index.html
-│   └── assets/
 ├── .dockerignore
+├── index.html
 ├── .gitignore
 ├── Dockerfile
-├── docker-compose.yml
+├── docker-compose-dev.yml
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -129,10 +132,6 @@ networks:
 ```
 
 ## Troubleshooting
-
-### 404 Errors
-
-If you encounter 404 errors, ensure the `--single` flag is included in the serve command in the Dockerfile to handle client-side routing properly.
 
 ### Orphaned Containers
 

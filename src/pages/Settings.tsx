@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { usePreferencesContext } from '../contexts/PreferencesContext';
 import { Category, NewsSource } from '../types';
+import CheckBox from '../components/CheckBox';
 
 const Settings: React.FC = () => {
   const { preferences, updateSources, updateCategories, resetPreferences } =
@@ -84,12 +85,11 @@ const Settings: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {availableSources.map((source) => (
             <div key={source.id} className="flex items-center space-x-2">
-              <input
-                type="checkbox"
+              <CheckBox
                 id={`source-${source.id}`}
+                name={`source-${source.id}`}
                 checked={selectedSources.includes(source.id)}
                 onChange={() => handleSourceChange(source.id)}
-                className="form-checkbox h-5 w-5 text-blue-600"
               />
               <label htmlFor={`source-${source.id}`} className="text-gray-700">
                 {source.name}
@@ -106,12 +106,11 @@ const Settings: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {availableCategories.map((category) => (
             <div key={category.id} className="flex items-center space-x-2">
-              <input
-                type="checkbox"
+              <CheckBox
                 id={`category-${category.id}`}
+                name={`category-${category.id}`}
                 checked={selectedCategories.includes(category.id)}
                 onChange={() => handleCategoryChange(category.id)}
-                className="form-checkbox h-5 w-5 text-blue-600"
               />
               <label
                 htmlFor={`category-${category.id}`}
@@ -126,7 +125,7 @@ const Settings: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:justify-between">
           <button
             onClick={handleSave}
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 mb-3 sm:mb-0"
+            className="bg-gray-800 text-white px-6 py-2 rounded hover:hover:bg-gray-500/70 transition-all duration-300 ease-linear mb-3 sm:mb-0"
           >
             Save Preferences
           </button>
