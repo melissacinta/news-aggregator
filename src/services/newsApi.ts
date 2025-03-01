@@ -9,7 +9,7 @@ export const fetchNewsApiArticles = async (
 
     // For NewsAPI, we need to fetch all categories when no keyword is provided
     if (!filters.keyword) {
-      params.append('language', 'en'); // Default to US news if no keyword
+      params.append('language', 'en'); // Default to english news if no keyword
     }
 
     const response = await fetch(

@@ -4,10 +4,6 @@ import { Category, NewsSource, SearchFilters } from '../types';
 
 interface SearchBarProps {
   onSearch: (keyword: string) => void;
-  // onFilterByDate: (from: string, to: string) => void;
-  // onFilterByCategory: (category?: Category) => void;
-  // onFilterBySource: (source?: NewsSource) => void;
-  // onFilterByAuthor: (author?: string) => void;
   categories: Category[];
   sources: NewsSource[];
   clearFilters: () => void;
